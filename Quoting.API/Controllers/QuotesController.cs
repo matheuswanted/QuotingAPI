@@ -23,7 +23,9 @@ namespace Quoting.API.Controllers
             _customerRepo = customerRepo;
             _unitOfWork = unitOfWork;
         }
-        public async Task<IActionResult> Quote(Customer customer)
+        [Route("Quote")]
+        [HttpPost]
+        public async Task<IActionResult> Quote([FromBody]Customer customer)
         {
             BadRequestObjectResult error = CheckConsistency(customer);
             if (error != null)
@@ -35,8 +37,15 @@ namespace Quoting.API.Controllers
                 _customerRepo.Add(customer);
             else
             {
-                customer.Id = c.Id;
-                _customerRepo.Update(c);
+                c.Gender = customer.Gender;
+                c.Address = customer.Address;
+                c.BirthDate = customer.BirthDate;
+                c.Email = customer.Email;
+                c.Phone = customer.Phone;
+                c.Vehicle.Maker = customer.Vehicle.Maker;
+                c.Vehicle.ManufacturingYear = customer.Vehicle.ManufacturingYear;
+                c.Vehicle.Model = customer.Vehicle.Model;
+                c.Vehicle.Type = customer.Vehicle.Type;
             }
 
             await _unitOfWork.SaveChangesAsync();

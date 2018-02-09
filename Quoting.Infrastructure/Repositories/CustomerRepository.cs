@@ -19,17 +19,17 @@ namespace Quoting.Infrastructure.Repositories
         }
         public void Add(Customer entity)
         {
-            _context.Attach<Customer>(entity);
+            _context.Add(entity);
         }
 
         public async Task<Customer> GetBySSN(string SSN)
         {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.SSN == SSN);
+            return await _context.Customers.Include(c => c.Vehicle).FirstOrDefaultAsync(c => c.SSN == SSN);
         }
 
         public void Update(Customer entity)
         {
-            _context.Attach<Customer>(entity);
+            _context.Update(entity);
         }
     }
 }
