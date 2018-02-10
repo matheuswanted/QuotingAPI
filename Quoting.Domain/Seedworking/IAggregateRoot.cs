@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Quoting.Domain.Seedworking
 {
-    public interface IRepository<TEntity>
+    public interface IAggregateRoot
     {
-        void Add(TEntity entity);
     }
 }

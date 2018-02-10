@@ -25,7 +25,6 @@ namespace Quoting.API.Tests
             _customerRepoMock = new Mock<ICustomerRepository>();
             _customerRepoMock.Setup(m => m.GetBySSN(It.IsAny<string>())).Returns(() => Async<Customer>(() => null));
             _customerRepoMock.Setup(m => m.Add(It.IsAny<Customer>()));
-            _customerRepoMock.Setup(m => m.Update(It.IsAny<Customer>()));
         }
         private Task<T> Async<T>(Func<T> factory)
         {
@@ -41,7 +40,7 @@ namespace Quoting.API.Tests
         {
 
             var controller = New();
-            var result = controller.Quote(CustomerGenerator.OkCustomer()).Result;
+            var result = controller.Quote(ControllerGenerator.OkCustomer()).Result;
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
             Assert.NotNull(okResult.Value);
@@ -49,7 +48,7 @@ namespace Quoting.API.Tests
             Assert.NotEqual(new Guid(), okResult.Value);
         }
         [Theory]
-        [MemberData(nameof(CustomerGenerator.BadCustomers),MemberType = typeof(CustomerGenerator))]
+        [MemberData(nameof(ControllerGenerator.BadCustomers),MemberType = typeof(ControllerGenerator))]
         public void QuotesQuote_ShouldReturnBadRequest(Customer customer)
         {
             var controller = New();

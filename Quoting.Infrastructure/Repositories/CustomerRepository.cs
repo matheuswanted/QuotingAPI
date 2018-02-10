@@ -26,10 +26,5 @@ namespace Quoting.Infrastructure.Repositories
         {
             return await _context.Customers.Include(c => c.Vehicle).FirstOrDefaultAsync(c => c.SSN == SSN);
         }
-
-        public void Update(Customer entity)
-        {
-            _context.Update(entity);
-        }
     }
 }

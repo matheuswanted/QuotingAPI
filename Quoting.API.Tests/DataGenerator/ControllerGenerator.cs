@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Quoting.API.Tests.DataGenerator
 {
-    public class CustomerGenerator
+    public class ControllerGenerator
     {
         public static Customer OkCustomer()
         {

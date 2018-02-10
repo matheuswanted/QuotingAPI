@@ -15,6 +15,7 @@ namespace Quoting.Domain.Models
         public string Gender { get; set; }
         public Vehicle Vehicle { get; set; }
         public DateTime BirthDate { get; set; }
+        internal int Age => DateTime.Now.Year - BirthDate.Year;
 
         public override bool IsConsistent()
         {
@@ -29,5 +30,6 @@ namespace Quoting.Domain.Models
 
             return base.IsConsistent();
         }
+
     }
 }
