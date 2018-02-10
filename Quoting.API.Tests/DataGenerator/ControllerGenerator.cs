@@ -22,7 +22,7 @@ namespace Quoting.API.Tests.DataGenerator
                 },
                 Vehicle = new Vehicle
                 {
-                    Maker = "Ford",
+                    Make = "Ford",
                     Model = "Fiesta",
                     Type = "Car",
                     ManufacturingYear = 2017

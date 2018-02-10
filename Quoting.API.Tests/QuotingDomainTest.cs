@@ -1,6 +1,8 @@
 ﻿using Quoting.API.Tests.DataGenerator;
 using Quoting.Domain.Models;
+using Quoting.Domain.Seedworking;
 using Quoting.Domain.Services;
+using Quoting.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +12,11 @@ namespace Quoting.API.Tests
 {
     public class QuotingDomainTest
     {
+        private void AssertValueObject(IValueObject expected, IValueObject actual)
+        {
+            if (!expected.Same(actual))
+                throw new Xunit.Sdk.EqualException(expected, actual);
+        }
         [Theory]
         [MemberData(nameof(DomainGenerator.CreateModifierScenarios), MemberType = typeof(DomainGenerator))]
         public void CalculateModifier_ShouldReturnAModifierByAgeRangeAndGender(Customer customer, IQuotingCalculator calculator, decimal modifier)
@@ -21,21 +28,24 @@ namespace Quoting.API.Tests
         public void CalculateBasePrice_ShouldReturnDefaultBasePrice_WhenNoRuleSatisfyingTheCriteriasExist()
         {
             var calcService = DomainGenerator.NewCalculator();
-            decimal basePrice = calcService.CalculateBasePrice(new Vehicle
+            BasePriceRule basePrice = calcService.SelectBasePriceRuleFor(new Vehicle
             {
-                Maker = "Ford",
+                Make = "Ford",
                 Model = "Focus",
                 ManufacturingYear = 2018,
                 Type = "Van"
             }).Result;
-            Assert.Equal(calcService.DefaultBasePrice(), basePrice);
+
+            AssertValueObject(calcService.DefaultBasePrice(), basePrice);
         }
 
         [Theory]
         [MemberData(nameof(DomainGenerator.CreateBasePriceScenarios), MemberType = typeof(DomainGenerator))]
-        public void CalculateBasePrice_ShouldReturnConfiguredPrice_WhenThereIsARuleAppliableToTheVehicle(Vehicle vehicle, IQuotingCalculator calculator, decimal basePrice)
+        public void SelectBasePriceRuleFor_ShouldReturnConfiguredPrice_WhenThereIsARuleAppliableToTheVehicle(Vehicle vehicle, IQuotingCalculator calculator, BasePriceRule basePrice)
         {
-            Assert.Equal(basePrice, calculator.CalculateBasePrice(vehicle).Result);
+            BasePriceRule resultRule = calculator.SelectBasePriceRuleFor(vehicle).Result;
+
+            AssertValueObject(basePrice, resultRule);
         }
     }
 }

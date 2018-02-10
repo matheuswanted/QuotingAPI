@@ -11,7 +11,7 @@ namespace Quoting.Domain.Models
         public string Type { get; set; }
         public int ManufacturingYear { get; set; }
         public string Model { get; set; }
-        public string Maker { get; set; }
+        public string Make { get; set; }
         public override bool IsConsistent()
         {
             ResetModelState();
@@ -21,14 +21,14 @@ namespace Quoting.Domain.Models
                 AddInconsitency("Invalid Manufacturing Year.");
             if (string.IsNullOrEmpty(Model))
                 AddInconsitency("Invalid vehicle model");
-            if (string.IsNullOrEmpty(Maker))
+            if (string.IsNullOrEmpty(Make))
                 AddInconsitency("Invalid vehicle maker.");
             return base.IsConsistent();
         }
         public bool Same(IValueObject @object)
         {
             var vehicle = @object as Vehicle;
-            return vehicle != null && Type == vehicle.Type && ManufacturingYear == vehicle.ManufacturingYear && Model == vehicle.Model && Maker == vehicle.Maker;
+            return vehicle != null && Type == vehicle.Type && ManufacturingYear == vehicle.ManufacturingYear && Model == vehicle.Model && Make == vehicle.Make;
         }
     }
 }

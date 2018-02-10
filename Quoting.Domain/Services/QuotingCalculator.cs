@@ -20,10 +20,15 @@ namespace Quoting.Domain.Services
             _basePriceRulesQuery = basePriceRulesQuery;
         }
 
-        public async Task<decimal> CalculateBasePrice(Vehicle vehicle)
+        public async Task<BasePriceRule> SelectBasePriceRuleFor(Vehicle vehicle)
         {
-            var result = await _basePriceRulesQuery.Run(new Queries.Requests.ByTypeAndYearOptional(vehicle.Type, vehicle.ManufacturingYear));
-            return DefaultBasePrice();
+            var rules = await _basePriceRulesQuery.Run(new Queries.Requests.ByTypeAndYearOptional(vehicle.Type, vehicle.ManufacturingYear));
+            var result = rules
+                .Where(r => r.AppliableFor(vehicle))
+                .Select(r => r.WithPriorityFor(vehicle))
+                .OrderByDescending(r=>r.Priority)
+                .FirstOrDefault();
+            return result ?? DefaultBasePrice();
         }
 
         public async Task<decimal> CalculateModifier(Customer customer)
@@ -33,10 +38,10 @@ namespace Quoting.Domain.Services
             return rule.Modifier;
         }
 
-        public decimal DefaultBasePrice()
+        public BasePriceRule DefaultBasePrice()
         {
 
-            return 1000;
+            return new BasePriceRule(null,null,null,null,1000);
         }
     }
 }
