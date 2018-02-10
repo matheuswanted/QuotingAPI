@@ -9,5 +9,14 @@ namespace Quoting.Domain.Models
     {
         public Customer Customer { get; set; }
         public Vehicle Vehicle { get; set; }
+
+        public override bool IsConsistent()
+        {
+            ResetModelState();
+            CheckChildConsistency(Customer, "Customer");
+            CheckChildConsistency(Vehicle, "Vehicle");
+
+            return base.IsConsistent();
+        }
     }
 }

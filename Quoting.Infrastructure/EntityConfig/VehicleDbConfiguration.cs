@@ -17,6 +17,7 @@ namespace Quoting.Infrastructure.EntityConfig
             builder.Property(v => v.ManufacturingYear).IsRequired();
             builder.Property(v => v.Model).IsRequired();
             builder.Property(v => v.Type).IsRequired();
+            builder.Property("CustomerId").IsRequired();
         }
     }
 }

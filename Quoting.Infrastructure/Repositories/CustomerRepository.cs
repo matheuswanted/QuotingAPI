@@ -24,7 +24,26 @@ namespace Quoting.Infrastructure.Repositories
 
         public async Task<Customer> GetBySSN(string SSN)
         {
-            return await _context.Customers.Include(c => c.Vehicle).FirstOrDefaultAsync(c => c.SSN == SSN);
+            return await _context.Customers.Include(c => c.Vehicles).FirstOrDefaultAsync(c => c.SSN == SSN);
+        }
+
+        public async Task Put(Customer customer)
+        {
+            var persisted = await GetBySSN(customer.SSN);
+
+            if (persisted == null)
+                Add(customer);
+            else
+            {
+                foreach (Vehicle v in customer.Vehicles)
+                    persisted.AddVehicle(v);
+
+                persisted.Gender = customer.Gender;
+                persisted.Address = customer.Address;
+                persisted.BirthDate = customer.BirthDate;
+                persisted.Email = customer.Email;
+                persisted.Phone = customer.Phone;
+            }
         }
     }
 }

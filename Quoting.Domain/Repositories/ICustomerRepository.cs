@@ -10,5 +10,6 @@ namespace Quoting.Domain.Repositories
     public interface ICustomerRepository : IRepository<Customer>
     {
         Task<Customer> GetBySSN(string SSN);
+        Task Put(Customer customer);
     }
 }

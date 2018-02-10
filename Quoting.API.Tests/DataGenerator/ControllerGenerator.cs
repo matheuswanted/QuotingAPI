@@ -7,20 +7,23 @@ namespace Quoting.API.Tests.DataGenerator
 {
     public class ControllerGenerator
     {
-        public static Customer OkCustomer()
+        public static Quote OkQuote()
         {
-            return new Customer()
+            return new Quote()
             {
-                SSN = "123-25-256",
-                Address = "15th street",
-                BirthDate = DateTime.Now,
-                Email = "email@gmail.com",
-                Gender = "M",
-                Phone = "+18695972",
+                Customer = new Customer()
+                {
+                    SSN = "123-25-256",
+                    Address = "15th street",
+                    BirthDate = DateTime.Now,
+                    Email = "email@gmail.com",
+                    Gender = "M",
+                    Phone = "+18695972"
+                },
                 Vehicle = new Vehicle
                 {
                     Maker = "Ford",
-                    Model= "Fiesta",
+                    Model = "Fiesta",
                     Type = "Car",
                     ManufacturingYear = 2017
                 }
@@ -28,16 +31,20 @@ namespace Quoting.API.Tests.DataGenerator
         }
         public static IEnumerable<object[]> BadCustomers()
         {
-            yield return new[] { new Customer() };
-            yield return new[] { new Customer()
-            {
-                SSN = "123-25-256",
-                Address = "15th street",
-                BirthDate = DateTime.Now,
-                Email = "email@gmail.com",
-                Gender = "M",
-                Phone = "+18695972"
-            } };
+            yield return new[] { new Quote() };
+            yield return new[] { new Quote()
+                {
+                    Customer = new Customer
+                    {
+                        SSN = "123-25-256",
+                        Address = "15th street",
+                        BirthDate = DateTime.Now,
+                        Email = "email@gmail.com",
+                        Gender = "M",
+                        Phone = "+18695972"
+                    }
+                }
+            };
         }
     }
 }

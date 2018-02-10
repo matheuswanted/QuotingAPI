@@ -21,14 +21,9 @@ namespace Quoting.API.Tests
         public QuotesControllerTest()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _unitOfWorkMock.Setup(m => m.SaveChangesAsync(default(System.Threading.CancellationToken))).Returns(()=>Async(()=>1));
+            _unitOfWorkMock.Setup(m => m.SaveChangesAsync(default(System.Threading.CancellationToken))).ReturnsAsync(()=>1);
             _customerRepoMock = new Mock<ICustomerRepository>();
-            _customerRepoMock.Setup(m => m.GetBySSN(It.IsAny<string>())).Returns(() => Async<Customer>(() => null));
-            _customerRepoMock.Setup(m => m.Add(It.IsAny<Customer>()));
-        }
-        private Task<T> Async<T>(Func<T> factory)
-        {
-            return Task.Factory.StartNew(factory);
+            _customerRepoMock.Setup(m => m.Put(It.IsAny<Customer>())).Returns(()=>Task.CompletedTask);
         }
         private QuotesController New()
         {
@@ -40,7 +35,7 @@ namespace Quoting.API.Tests
         {
 
             var controller = New();
-            var result = controller.Quote(ControllerGenerator.OkCustomer()).Result;
+            var result = controller.Quote(ControllerGenerator.OkQuote()).Result;
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
             Assert.NotNull(okResult.Value);
@@ -49,7 +44,7 @@ namespace Quoting.API.Tests
         }
         [Theory]
         [MemberData(nameof(ControllerGenerator.BadCustomers),MemberType = typeof(ControllerGenerator))]
-        public void QuotesQuote_ShouldReturnBadRequest(Customer customer)
+        public void QuotesQuote_ShouldReturnBadRequest(Quote customer)
         {
             var controller = New();
             var result = controller.Quote(customer).Result;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Quoting.Domain.Models
 {
-    public class Vehicle : ConsistentModel
+    public class Vehicle : ConsistentModel, IValueObject
     {
         public string Type { get; set; }
         public int ManufacturingYear { get; set; }
@@ -24,6 +24,11 @@ namespace Quoting.Domain.Models
             if (string.IsNullOrEmpty(Maker))
                 AddInconsitency("Invalid vehicle maker.");
             return base.IsConsistent();
+        }
+        public bool Same(IValueObject @object)
+        {
+            var vehicle = @object as Vehicle;
+            return vehicle != null && Type == vehicle.Type && ManufacturingYear == vehicle.ManufacturingYear && Model == vehicle.Model && Maker == vehicle.Maker;
         }
     }
 }

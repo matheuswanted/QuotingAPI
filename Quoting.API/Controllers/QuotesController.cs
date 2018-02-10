@@ -25,40 +25,27 @@ namespace Quoting.API.Controllers
         }
         [Route("Quote")]
         [HttpPost]
-        public async Task<IActionResult> Quote([FromBody]Customer customer)
+        public async Task<IActionResult> Quote([FromBody]Quote quote)
         {
-            BadRequestObjectResult error = CheckConsistency(customer);
+            BadRequestObjectResult error = CheckConsistency(quote);
             if (error != null)
                 return error;
 
-            var c = await _customerRepo.GetBySSN(customer.SSN);
+            quote.Customer.AddVehicle(quote.Vehicle);
 
-            if (c == null)
-                _customerRepo.Add(customer);
-            else
-            {
-                c.Gender = customer.Gender;
-                c.Address = customer.Address;
-                c.BirthDate = customer.BirthDate;
-                c.Email = customer.Email;
-                c.Phone = customer.Phone;
-                c.Vehicle.Maker = customer.Vehicle.Maker;
-                c.Vehicle.ManufacturingYear = customer.Vehicle.ManufacturingYear;
-                c.Vehicle.Model = customer.Vehicle.Model;
-                c.Vehicle.Type = customer.Vehicle.Type;
-            }
+            await _customerRepo.Put(quote.Customer);
 
             await _unitOfWork.SaveChangesAsync();
 
             return Ok(Guid.NewGuid());
         }
 
-        private BadRequestObjectResult CheckConsistency(Customer customer)
+        private BadRequestObjectResult CheckConsistency(Quote quote)
         {
-            if (customer == null)
+            if (quote == null)
                 return BadRequest("Invalid parameter.");
-            if (!customer.IsConsistent())
-                return BadRequest(string.Join(Environment.NewLine, customer.ModelInconsistecies.Select(n => n.Notification)));
+            if (!quote.IsConsistent())
+                return BadRequest(string.Join(Environment.NewLine, quote.ModelInconsistecies));
             return null;
         }
     }

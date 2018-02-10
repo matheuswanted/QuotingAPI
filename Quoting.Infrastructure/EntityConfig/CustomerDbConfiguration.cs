@@ -14,6 +14,7 @@ namespace Quoting.Infrastructure.EntityConfig
             builder.ToTable("Customers");
             builder.HasKey(c => c.Id);
             builder.Ignore(c => c.ModelInconsistecies);
+            builder.Ignore(c => c.CurrentVehicle);
 
             builder.Property(c => c.Id).ForSqlServerUseSequenceHiLo("seq_customers");
             
@@ -23,12 +24,12 @@ namespace Quoting.Infrastructure.EntityConfig
             builder.Property(c => c.BirthDate).IsRequired();
             builder.Property(c => c.Email).IsRequired();
             builder.Property(c => c.Gender).IsRequired();
-            builder.Property<int?>("VehicleId").IsRequired(false);
 
-            builder.HasOne(c => c.Vehicle)
-                .WithOne()
-                .IsRequired(false)
-                .HasForeignKey(typeof(Customer),"VehicleId");
+
+
+            var navigation = builder.Metadata.FindNavigation(nameof(Customer.Vehicles));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
         }
     }
 }
