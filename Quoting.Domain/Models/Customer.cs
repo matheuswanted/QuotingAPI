@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Quoting.Domain.Models
 {
-    public class Customer : ConsistentModel
+    public class Customer : ConsistentModel, IAggregateRoot
     {
         public Customer()
         {

@@ -9,10 +9,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Quoting.Domain.Queries;
 using Quoting.Domain.Repositories;
+using Quoting.Domain.Repositories.Queryable;
 using Quoting.Domain.Seedworking;
 using Quoting.Infrastructure;
+using Quoting.Infrastructure.Queries;
 using Quoting.Infrastructure.Repositories;
+using Quoting.Infrastructure.Repositories.Queryable;
 
 namespace Quoting.API
 {
@@ -43,6 +47,9 @@ namespace Quoting.API
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IQuoteRepository, QuoteRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IQuoteQueryableRepository, QuoteQueryableRepository>();
+            services.AddScoped<IQuoteQuery, QuoteInformationRequestQuery>();
+            services.AddScoped<IQuoteQuery, QuoteStatusRequestQuery>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

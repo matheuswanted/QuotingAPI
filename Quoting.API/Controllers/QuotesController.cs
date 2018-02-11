@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Quoting.Domain.Models;
+using Quoting.Domain.Queries;
 using Quoting.Domain.Repositories;
+using Quoting.Domain.Repositories.Queryable;
 using Quoting.Domain.Seedworking;
 
 namespace Quoting.API.Controllers
@@ -18,12 +17,14 @@ namespace Quoting.API.Controllers
         private readonly ICustomerRepository _customerRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IQuoteRepository _quoteRepo;
+        private readonly IQuoteQueryableRepository _quoteQueries;
 
-        public QuotesController(ICustomerRepository customerRepo, IQuoteRepository quoteRepo, IUnitOfWork unitOfWork)
+        public QuotesController(ICustomerRepository customerRepo, IQuoteRepository quoteRepo, IQuoteQueryableRepository quoteQueries, IUnitOfWork unitOfWork)
         {
             _customerRepo = customerRepo;
             _unitOfWork = unitOfWork;
             _quoteRepo = quoteRepo;
+            _quoteQueries = quoteQueries;
         }
         [Route("Quote")]
         [HttpPost]
@@ -42,6 +43,49 @@ namespace Quoting.API.Controllers
             await _unitOfWork.SaveChangesAsync();
 
             return Ok(quote.Id);
+        }
+
+        [Route("Information")]
+        [HttpGet]
+        public async Task<IActionResult> Information(int id)
+        {
+            var result = await _quoteQueries.Query<IQuoteInformationRequestQuery>().Run(id);
+            if (result == null)
+                return NotFound();
+
+            return Ok(new
+            {
+                Customer = new 
+                {
+                    result.Customer.SSN,
+                    result.Customer.Phone,
+                    result.Customer.Address,
+                    result.Customer.Email,
+                    result.Customer.Gender,
+                    BirthDate = result.Customer.BirthDate.ToShortDateString(),
+                },
+                Vehicle = new {
+                    result.Vehicle.Make,
+                    result.Vehicle.ManufacturingYear,
+                    result.Vehicle.Model,
+                    result.Vehicle.Type
+                }
+            });
+        }
+
+        [Route("Status")]
+        [HttpGet]
+        public async Task<IActionResult> Status(int id)
+        {
+            var result = await _quoteQueries.Query<IQuoteStatusRequestQuery>().Run(id);
+            if (result == null)
+                return NotFound();
+
+            return Ok(new
+            {
+                Status = result.Status.ToString(),
+                Value = result.Value.ToString("#0.00")
+            });
         }
 
         private BadRequestObjectResult CheckConsistency(Quote quote)

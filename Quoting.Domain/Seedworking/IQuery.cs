@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Quoting.Domain.Queries
+namespace Quoting.Domain.Seedworking
 {
     public interface IQuery<TResult>
     {
-        Task<IEnumerable<TResult>> Run();
+        Task<TResult> Run();
     }
     public interface IQuery<TResult, TRequest>
     {
-        Task<IEnumerable<TResult>> Run(TRequest request);
+        Task<TResult> Run(TRequest request);
     }
 }
