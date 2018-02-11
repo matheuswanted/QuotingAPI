@@ -3,7 +3,9 @@ using Moq;
 using Quoting.API.Controllers;
 using Quoting.API.Tests.DataGenerator;
 using Quoting.Domain.Models;
+using Quoting.Domain.Queries;
 using Quoting.Domain.Repositories;
+using Quoting.Domain.Repositories.Queryable;
 using Quoting.Domain.Seedworking;
 using System;
 using System.Collections.Generic;
@@ -30,7 +32,7 @@ namespace Quoting.API.Tests
         }
         private QuotesController New()
         {
-            return new QuotesController(_customerRepoMock.Object, _quoteRepoMock.Object, _unitOfWorkMock.Object);
+            return new QuotesController(_customerRepoMock.Object, _quoteRepoMock.Object, null, _unitOfWorkMock.Object);
         }
         [Fact]
 
