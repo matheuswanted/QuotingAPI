@@ -41,6 +41,7 @@ namespace Quoting.API
                 }, ServiceLifetime.Scoped);
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IQuoteRepository, QuoteRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
         }
 

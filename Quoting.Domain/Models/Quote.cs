@@ -18,5 +18,11 @@ namespace Quoting.Domain.Models
 
             return base.IsConsistent();
         }
+
+        public void SetCustomer(Customer customer)
+        {
+            Customer = customer;
+            Vehicle = customer.CurrentVehicle;
+        }
     }
 }

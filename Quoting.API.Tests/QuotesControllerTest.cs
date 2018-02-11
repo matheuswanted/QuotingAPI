@@ -17,17 +17,20 @@ namespace Quoting.API.Tests
     {
         private Mock<IUnitOfWork> _unitOfWorkMock;
         private Mock<ICustomerRepository> _customerRepoMock;
+        private Mock<IQuoteRepository> _quoteRepoMock;
 
         public QuotesControllerTest()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _unitOfWorkMock.Setup(m => m.SaveChangesAsync(default(System.Threading.CancellationToken))).ReturnsAsync(()=>1);
+            _unitOfWorkMock.Setup(m => m.SaveChangesAsync(default(System.Threading.CancellationToken))).ReturnsAsync(() => 1);
             _customerRepoMock = new Mock<ICustomerRepository>();
-            _customerRepoMock.Setup(m => m.Put(It.IsAny<Customer>())).Returns(()=>Task.CompletedTask);
+            _customerRepoMock.Setup(m => m.Put(It.IsAny<Customer>())).ReturnsAsync(() => ControllerGenerator.OkCustomer());
+            _quoteRepoMock = new Mock<IQuoteRepository>();
+            _quoteRepoMock.Setup(m => m.Add(It.IsAny<Quote>()));
         }
         private QuotesController New()
         {
-            return new QuotesController(_customerRepoMock.Object, _unitOfWorkMock.Object);
+            return new QuotesController(_customerRepoMock.Object, _quoteRepoMock.Object, _unitOfWorkMock.Object);
         }
         [Fact]
 
@@ -39,11 +42,11 @@ namespace Quoting.API.Tests
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
             Assert.NotNull(okResult.Value);
-            Assert.IsType<Guid>(okResult.Value);
-            Assert.NotEqual(new Guid(), okResult.Value);
+            Assert.IsType<int>(okResult.Value);
+            Assert.NotEqual(default(int), okResult.Value);
         }
         [Theory]
-        [MemberData(nameof(ControllerGenerator.BadCustomers),MemberType = typeof(ControllerGenerator))]
+        [MemberData(nameof(ControllerGenerator.BadCustomers), MemberType = typeof(ControllerGenerator))]
         public void QuotesQuote_ShouldReturnBadRequest(Quote customer)
         {
             var controller = New();

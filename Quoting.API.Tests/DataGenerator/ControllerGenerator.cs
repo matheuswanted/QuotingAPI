@@ -11,15 +11,8 @@ namespace Quoting.API.Tests.DataGenerator
         {
             return new Quote()
             {
-                Customer = new Customer()
-                {
-                    SSN = "123-25-256",
-                    Address = "15th street",
-                    BirthDate = DateTime.Now,
-                    Email = "email@gmail.com",
-                    Gender = "M",
-                    Phone = "+18695972"
-                },
+                Id = 1,
+                Customer = OkCustomer(),
                 Vehicle = new Vehicle
                 {
                     Make = "Ford",
@@ -27,6 +20,19 @@ namespace Quoting.API.Tests.DataGenerator
                     Type = "Car",
                     ManufacturingYear = 2017
                 }
+            };
+        }
+        public static Customer OkCustomer()
+        {
+            return new Customer()
+            {
+                Id = 1,
+                SSN = "123-25-256",
+                Address = "15th street",
+                BirthDate = DateTime.Now,
+                Email = "email@gmail.com",
+                Gender = "M",
+                Phone = "+18695972"
             };
         }
         public static IEnumerable<object[]> BadCustomers()

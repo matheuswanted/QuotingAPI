@@ -12,6 +12,7 @@ namespace Quoting.Infrastructure
     {
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Quote> Quotes { get; set; }
         public QuotingDbContext(DbContextOptions<QuotingDbContext> options) : base(options)
         {
 
@@ -21,6 +22,7 @@ namespace Quoting.Infrastructure
         {
             modelBuilder.ApplyConfiguration(new CustomerDbConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleDbConfiguration());
+            modelBuilder.ApplyConfiguration(new QuoteDbConfiguration());
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Quoting.Domain.Seedworking
     {
         public DefaultInconsistency(string notifcation, bool error = true)
         {
-            this.Notification = notifcation;
+            this.Message = notifcation;
             this.Error = error;
         }
         public bool Error { get; }
 
-        public string Notification { get; }
+        public string Message { get; }
     }
 }

@@ -7,6 +7,6 @@ namespace Quoting.Domain.Seedworking
     public interface IModelInconsistency
     {
         bool Error { get; }
-        string Notification { get; }
+        string Message { get; }
     }
 }

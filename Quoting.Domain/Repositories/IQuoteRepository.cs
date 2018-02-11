@@ -3,13 +3,11 @@ using Quoting.Domain.Seedworking;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Quoting.Domain.Repositories
 {
-    public interface ICustomerRepository : IRepository<Customer>
+    public interface IQuoteRepository : IRepository<Quote>
     {
-        Task<Customer> GetBySSN(string SSN);
-        Task<Customer> Put(Customer customer);
+
     }
 }

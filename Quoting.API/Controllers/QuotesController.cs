@@ -15,13 +15,15 @@ namespace Quoting.API.Controllers
     [Route("api/Quotes")]
     public class QuotesController : Controller
     {
-        private ICustomerRepository _customerRepo;
-        private IUnitOfWork _unitOfWork;
+        private readonly ICustomerRepository _customerRepo;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IQuoteRepository _quoteRepo;
 
-        public QuotesController(ICustomerRepository customerRepo, IUnitOfWork unitOfWork)
+        public QuotesController(ICustomerRepository customerRepo, IQuoteRepository quoteRepo, IUnitOfWork unitOfWork)
         {
             _customerRepo = customerRepo;
             _unitOfWork = unitOfWork;
+            _quoteRepo = quoteRepo;
         }
         [Route("Quote")]
         [HttpPost]
@@ -33,11 +35,13 @@ namespace Quoting.API.Controllers
 
             quote.Customer.AddVehicle(quote.Vehicle);
 
-            await _customerRepo.Put(quote.Customer);
+            quote.SetCustomer(await _customerRepo.Put(quote.Customer));
+
+            _quoteRepo.Add(quote);
 
             await _unitOfWork.SaveChangesAsync();
 
-            return Ok(Guid.NewGuid());
+            return Ok(quote.Id);
         }
 
         private BadRequestObjectResult CheckConsistency(Quote quote)
@@ -45,7 +49,7 @@ namespace Quoting.API.Controllers
             if (quote == null)
                 return BadRequest("Invalid parameter.");
             if (!quote.IsConsistent())
-                return BadRequest(string.Join(Environment.NewLine, quote.ModelInconsistecies));
+                return BadRequest(string.Join(Environment.NewLine, quote.ModelInconsistecies.Select(i=>i.Message)));
             return null;
         }
     }

@@ -27,7 +27,7 @@ namespace Quoting.Infrastructure.Repositories
             return await _context.Customers.Include(c => c.Vehicles).FirstOrDefaultAsync(c => c.SSN == SSN);
         }
 
-        public async Task Put(Customer customer)
+        public async Task<Customer> Put(Customer customer)
         {
             var persisted = await GetBySSN(customer.SSN);
 
@@ -44,6 +44,7 @@ namespace Quoting.Infrastructure.Repositories
                 persisted.Email = customer.Email;
                 persisted.Phone = customer.Phone;
             }
+            return persisted ?? customer;
         }
     }
 }
