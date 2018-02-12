@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Quoting.Domain.Models;
 using Quoting.Domain.Queries;
 using Quoting.Domain.Repositories;
@@ -18,13 +19,15 @@ namespace Quoting.API.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IQuoteRepository _quoteRepo;
         private readonly IQuoteQueryableRepository _quoteQueries;
+        private readonly IMemoryCache _cache;
 
-        public QuotesController(ICustomerRepository customerRepo, IQuoteRepository quoteRepo, IQuoteQueryableRepository quoteQueries, IUnitOfWork unitOfWork)
+        public QuotesController(ICustomerRepository customerRepo, IQuoteRepository quoteRepo, IQuoteQueryableRepository quoteQueries, IUnitOfWork unitOfWork, IMemoryCache cache)
         {
             _customerRepo = customerRepo;
             _unitOfWork = unitOfWork;
             _quoteRepo = quoteRepo;
             _quoteQueries = quoteQueries;
+            _cache = cache;
         }
         [Route("Quote")]
         [HttpPost]
@@ -42,35 +45,37 @@ namespace Quoting.API.Controllers
 
             await _unitOfWork.SaveChangesAsync();
 
+            CacheRequest(quote);
+
             return Ok(quote.Id);
         }
 
+        private void CacheRequest(Quote quote)
+            => _cache.Set(QuoteRequestKey(quote.Id), QuoteToRequest(quote), DateTimeOffset.Now.AddHours(1));
+
+        private string QuoteRequestKey(int id)
+        {
+            return $"quote_request_{id}";
+        }
+
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 3600)]
         [Route("Information")]
         [HttpGet]
         public async Task<IActionResult> Information(int id)
         {
+            var cached = _cache.Get(QuoteRequestKey(id));
+
+            if (cached != null)
+                return Ok(cached);
+
             var result = await _quoteQueries.Query<IQuoteInformationRequestQuery>().Run(id);
+
             if (result == null)
                 return NotFound();
 
-            return Ok(new
-            {
-                Customer = new 
-                {
-                    result.Customer.SSN,
-                    result.Customer.Phone,
-                    result.Customer.Address,
-                    result.Customer.Email,
-                    result.Customer.Gender,
-                    BirthDate = result.Customer.BirthDate.ToShortDateString(),
-                },
-                Vehicle = new {
-                    result.Vehicle.Make,
-                    result.Vehicle.ManufacturingYear,
-                    result.Vehicle.Model,
-                    result.Vehicle.Type
-                }
-            });
+            CacheRequest(result);
+
+            return Ok(QuoteToRequest(result));
         }
 
         [Route("Status")]
@@ -88,12 +93,33 @@ namespace Quoting.API.Controllers
             });
         }
 
+        private object QuoteToRequest(Quote quote)
+            => new
+            {
+                Customer = new
+                {
+                    quote.Customer.SSN,
+                    quote.Customer.Phone,
+                    quote.Customer.Address,
+                    quote.Customer.Email,
+                    quote.Customer.Gender,
+                    BirthDate = quote.Customer.BirthDate.ToShortDateString(),
+                },
+                Vehicle = new
+                {
+                    quote.Vehicle.Make,
+                    quote.Vehicle.ManufacturingYear,
+                    quote.Vehicle.Model,
+                    quote.Vehicle.Type
+                }
+            };
+
         private BadRequestObjectResult CheckConsistency(Quote quote)
         {
             if (quote == null)
                 return BadRequest("Invalid parameter.");
             if (!quote.IsConsistent())
-                return BadRequest(string.Join(Environment.NewLine, quote.ModelInconsistecies.Select(i=>i.Message)));
+                return BadRequest(string.Join(Environment.NewLine, quote.ModelInconsistecies.Select(i => i.Message)));
             return null;
         }
     }
