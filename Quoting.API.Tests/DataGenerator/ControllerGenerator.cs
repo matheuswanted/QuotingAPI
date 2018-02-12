@@ -24,7 +24,7 @@ namespace Quoting.API.Tests.DataGenerator
         }
         public static Customer OkCustomer()
         {
-            return new Customer()
+            var c = new Customer()
             {
                 Id = 1,
                 SSN = "123-25-256",
@@ -34,6 +34,14 @@ namespace Quoting.API.Tests.DataGenerator
                 Gender = "M",
                 Phone = "+18695972"
             };
+            c.AddVehicle(new Vehicle
+            {
+                Make = "Ford",
+                Model = "Fiesta",
+                Type = "Car",
+                ManufacturingYear = 2017
+            });
+            return c;
         }
         public static IEnumerable<object[]> BadCustomers()
         {

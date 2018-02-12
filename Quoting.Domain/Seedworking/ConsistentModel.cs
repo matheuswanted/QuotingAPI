@@ -1,16 +1,19 @@
-﻿using System;
+﻿using Quoting.Infrastructure.Bus.Contracts;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Quoting.Domain.Seedworking
 {
-    public abstract class ConsistentModel : IConsistentModel
+    public abstract class ConsistentModel : IConsistentModel, IEventProducer
     {
         private List<IModelInconsistency> _modelInconsistencies = new List<IModelInconsistency>();
         public IReadOnlyCollection<IModelInconsistency> ModelInconsistecies => _modelInconsistencies;
 
+        private List<IEvent> _events = new List<IEvent>();
+        public IReadOnlyCollection<IEvent> Events => _events;
+
         public int Id { get; set; }
+
 
         public bool IsTransient() => Id == default(int);
         public virtual bool IsConsistent()
@@ -28,5 +31,9 @@ namespace Quoting.Domain.Seedworking
         }
         protected void ResetModelState()
             => _modelInconsistencies.Clear();
+
+        public void Notify(IEvent notification)
+            => _events.Add(notification);
+        
     }
 }

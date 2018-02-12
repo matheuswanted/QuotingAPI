@@ -6,6 +6,7 @@ namespace Quoting.Domain.ValueObjects
 {
     public class BasePriceRule : IValueObject
     {
+        private BasePriceRule() { }
         public BasePriceRule(int? year, string type, string model, string make, decimal basePrice)
         {
             BasePrice = basePrice;
@@ -14,11 +15,11 @@ namespace Quoting.Domain.ValueObjects
             Type = type;
             Year = year;
         }
-        public int? Year { get; }
-        public string Type { get; }
-        public string Make { get; }
-        public string Model { get; }
-        public decimal BasePrice { get; }
+        public int? Year { get; private set; }
+        public string Type { get; private set; }
+        public string Make { get; private set; }
+        public string Model { get; private set; }
+        public decimal BasePrice { get; private set; }
 
         public bool Same(IValueObject @object)
         {

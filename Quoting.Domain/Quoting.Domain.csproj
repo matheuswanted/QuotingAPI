@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Quoting.Infrastucture.Bus.Contracts\Quoting.Infrastructure.Bus.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

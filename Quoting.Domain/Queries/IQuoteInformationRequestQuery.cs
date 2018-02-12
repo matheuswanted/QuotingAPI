@@ -9,8 +9,4 @@ namespace Quoting.Domain.Queries
     public interface IQuoteInformationRequestQuery : IQuoteQuery, IQuery<Quote,int>
     {
     }
-    public interface IQuoteStatusRequestQuery : IQuoteQuery, IQuery<Quote, int>
-    {
-
-    }
 }

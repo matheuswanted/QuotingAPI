@@ -15,9 +15,9 @@ namespace Quoting.Infrastructure.Queries
         {
             _context = unitOfWork.Context() as QuotingDbContext;
         }
-        public Task<Quote> Run(int request)
+        public async Task<Quote> Run(int request)
         {
-            return _context.Quotes
+            return await _context.Quotes
                 .Where(q => q.Id == request)
                 .FirstOrDefaultAsync();
         }

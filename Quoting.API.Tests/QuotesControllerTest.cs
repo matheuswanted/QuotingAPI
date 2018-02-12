@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using Quoting.API.Controllers;
 using Quoting.API.Tests.DataGenerator;
@@ -32,7 +33,7 @@ namespace Quoting.API.Tests
         }
         private QuotesController New()
         {
-            return new QuotesController(_customerRepoMock.Object, _quoteRepoMock.Object, null, _unitOfWorkMock.Object);
+            return new QuotesController(_customerRepoMock.Object, _quoteRepoMock.Object, null, _unitOfWorkMock.Object, null);
         }
         [Fact]
 

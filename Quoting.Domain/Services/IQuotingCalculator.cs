@@ -9,7 +9,7 @@ namespace Quoting.Domain.Services
 {
     public interface IQuotingCalculator
     {
-        Task<decimal> CalculateModifier(Customer customer);
+        Task<PriceModifierRule> CalculateModifier(Customer customer);
         Task<BasePriceRule> SelectBasePriceRuleFor(Vehicle vehicle);
         BasePriceRule DefaultBasePrice();
     }

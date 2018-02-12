@@ -1,12 +1,16 @@
-﻿using Quoting.Domain.Seedworking;
+﻿using Quoting.Domain.Models.Notifications;
+using Quoting.Domain.Seedworking;
+using Quoting.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Quoting.Domain.Models
 {
     public enum QuoteStatus
     {
+        None,
         Requested,
         Done
     }
@@ -14,8 +18,9 @@ namespace Quoting.Domain.Models
     {
         public Customer Customer { get; set; }
         public Vehicle Vehicle { get; set; }
-        public decimal Value { get;}
-        public QuoteStatus Status{ get; }
+        public decimal Value { get; private set; }
+        public int _status;
+        public QuoteStatus Status { get => (QuoteStatus)_status; set => _status = (int)value; }
         public override bool IsConsistent()
         {
             ResetModelState();
@@ -29,6 +34,19 @@ namespace Quoting.Domain.Models
         {
             Customer = customer;
             Vehicle = customer.CurrentVehicle;
+        }
+        public void SetStatusAsRequested()
+        {
+            if (Status != QuoteStatus.None)
+                throw new ApplicationException("It's not possible to change the current Status to 'Requested'.");
+            Status = QuoteStatus.Requested;
+            Notify(new QuoteRequestedEvent(this));
+        }
+
+        public void CalculatePriceWithRules(BasePriceRule basePriceRule, PriceModifierRule modifier)
+        {
+            Value = basePriceRule.BasePrice * modifier.Modifier;
+            Status = QuoteStatus.Done;
         }
     }
 }

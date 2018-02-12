@@ -7,13 +7,14 @@ namespace Quoting.Domain.ValueObjects
 {
     public class Range : IValueObject
     {
+        private Range() { }
         public Range(int? start, int? end)
         {
             Start = start;
             End = end;
         }
-        public int? Start { get; }
-        public int? End { get; }
+        public int? Start { get; private set; }
+        public int? End { get; private set; }
         public bool InRange(int value)
             => (Start == null || value >= Start) && (End == null || value <= End);
 

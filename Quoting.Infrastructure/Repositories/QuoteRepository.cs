@@ -2,8 +2,11 @@
 using Quoting.Domain.Repositories;
 using Quoting.Domain.Seedworking;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Quoting.Infrastructure.Repositories
 {
@@ -20,6 +23,21 @@ namespace Quoting.Infrastructure.Repositories
         public void Add(Quote entity)
         {
             _context.Add(entity);
+        }
+
+        public async Task<Quote> FindById(int id)
+        {
+            return await _context.Quotes
+                .Include(q => q.Customer)
+                .Include(q => q.Vehicle)
+                .Where(q => q.Id == id)
+                .FirstOrDefaultAsync();
+        }
+
+        public void Update(Quote quote)
+        {
+            if (_context.Entry(quote).State == EntityState.Detached)
+                _context.Update(quote);
         }
     }
 }

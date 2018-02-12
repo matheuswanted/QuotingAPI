@@ -12,9 +12,10 @@ using System;
 namespace Quoting.Infrastructure.Migrations
 {
     [DbContext(typeof(QuotingDbContext))]
-    partial class QuotingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180212165323_Rules-QuoteStatus")]
+    partial class RulesQuoteStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

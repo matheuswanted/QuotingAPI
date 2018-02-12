@@ -19,9 +19,9 @@ namespace Quoting.API.Tests
         }
         [Theory]
         [MemberData(nameof(DomainGenerator.CreateModifierScenarios), MemberType = typeof(DomainGenerator))]
-        public void CalculateModifier_ShouldReturnAModifierByAgeRangeAndGender(Customer customer, IQuotingCalculator calculator, decimal modifier)
+        public void CalculateModifier_ShouldReturnAModifierByAgeRangeAndGender(Customer customer, IQuotingCalculator calculator, PriceModifierRule modifier)
         {
-            Assert.Equal(modifier, calculator.CalculateModifier(customer).Result);
+            AssertValueObject(modifier, calculator.CalculateModifier(customer).Result);
         }
 
         [Fact]

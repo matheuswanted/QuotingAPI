@@ -1,10 +1,12 @@
 ﻿using Moq;
 using Quoting.Domain.Models;
 using Quoting.Domain.Queries;
+using Quoting.Domain.Repositories.Queryable;
 using Quoting.Domain.Services;
 using Quoting.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Quoting.API.Tests.DataGenerator
@@ -18,26 +20,27 @@ namespace Quoting.API.Tests.DataGenerator
         public static IEnumerable<object[]> CreateModifierScenarios()
         {
             var calculator = NewCalculator();
-            yield return new object[] { NewCustomer(16, "M"), calculator, 1.5M };
-            yield return new object[] { NewCustomer(24, "M"), calculator, 1.5M };
-            yield return new object[] { NewCustomer(25, "M"), calculator, 1.2M };
-            yield return new object[] { NewCustomer(34, "M"), calculator, 1.2M };
-            yield return new object[] { NewCustomer(35, "M"), calculator, 1M };
-            yield return new object[] { NewCustomer(60, "M"), calculator, 1M };
-            yield return new object[] { NewCustomer(80, "M"), calculator, 1.3M };
-            yield return new object[] { NewCustomer(16, "F"), calculator, 1.4M };
-            yield return new object[] { NewCustomer(24, "F"), calculator, 1.4M };
-            yield return new object[] { NewCustomer(25, "F"), calculator, 1M };
-            yield return new object[] { NewCustomer(60, "F"), calculator, 1M };
-            yield return new object[] { NewCustomer(80, "F"), calculator, 1.2M };
+            var rules = Run().ToArray();
+            yield return new object[] { NewCustomer(16, "M"), calculator, rules[0] };
+            yield return new object[] { NewCustomer(24, "M"), calculator, rules[0] };
+            yield return new object[] { NewCustomer(25, "M"), calculator, rules[1] };
+            yield return new object[] { NewCustomer(34, "M"), calculator, rules[1] };
+            yield return new object[] { NewCustomer(35, "M"), calculator, rules[2] };
+            yield return new object[] { NewCustomer(60, "M"), calculator, rules[2] };
+            yield return new object[] { NewCustomer(80, "M"), calculator, rules[3] };
+            yield return new object[] { NewCustomer(16, "F"), calculator, rules[4] };
+            yield return new object[] { NewCustomer(24, "F"), calculator, rules[4] };
+            yield return new object[] { NewCustomer(25, "F"), calculator, rules[5] };
+            yield return new object[] { NewCustomer(60, "F"), calculator, rules[5] };
+            yield return new object[] { NewCustomer(80, "F"), calculator, rules[6] };
         }
         public static IEnumerable<object[]> CreateBasePriceScenarios()
         {
             var calculator = NewCalculator();
             yield return new object[] { NewVehicle(2008, "Fiat", "Palio"), calculator, R_1800 };
             yield return new object[] { NewVehicle(1966, "Fiat", "Palio"), calculator, R_1400 };
-            yield return new object[] { NewVehicle(1966, "Fiat", "Uno"), calculator, R_2500};
-            yield return new object[] { NewVehicle(2006, "BMW", "M3"), calculator, R_3000};
+            yield return new object[] { NewVehicle(1966, "Fiat", "Uno"), calculator, R_2500 };
+            yield return new object[] { NewVehicle(2006, "BMW", "M3"), calculator, R_3000 };
         }
         private static Customer NewCustomer(int age, string gender)
             => new Customer
@@ -57,13 +60,20 @@ namespace Quoting.API.Tests.DataGenerator
         {
             var mockPriceModifierRulesAppliableToCustomerQuery = new Mock<IPriceModifierRulesAppliableToCustomerQuery>();
             var mockBasePriceRulesAppliableToVehicleQuery = new Mock<IBasePriceRulesAppliableToVehicleQuery>();
+            var mockQueryableRepo = new Mock<IQuotePriceQueryableRepository>();
 
             mockPriceModifierRulesAppliableToCustomerQuery.Setup(m => m.Run()).ReturnsAsync(Run);
             mockBasePriceRulesAppliableToVehicleQuery
                 .Setup(m => m.Run(It.IsAny<Domain.Queries.Requests.ByTypeAndYearOptional>()))
                 .ReturnsAsync(() => RunBasePriceQuery());
+            mockQueryableRepo
+                .Setup(m => m.Query<IPriceModifierRulesAppliableToCustomerQuery>())
+                .Returns(() => mockPriceModifierRulesAppliableToCustomerQuery.Object);
+            mockQueryableRepo
+                .Setup(m => m.Query<IBasePriceRulesAppliableToVehicleQuery>())
+                .Returns(() => mockBasePriceRulesAppliableToVehicleQuery.Object);
 
-            return new QuotingCalculator(mockPriceModifierRulesAppliableToCustomerQuery.Object, mockBasePriceRulesAppliableToVehicleQuery.Object);
+            return new QuotingCalculator(mockQueryableRepo.Object);
         }
         private static IEnumerable<BasePriceRule> RunBasePriceQuery()
         {

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Quoting.Domain.Queries
 {
-    public interface IBasePriceRulesAppliableToVehicleQuery : IQuery<IEnumerable<BasePriceRule>, ByTypeAndYearOptional>
+    public interface IBasePriceRulesAppliableToVehicleQuery : IQuery<IEnumerable<BasePriceRule>, ByTypeAndYearOptional>, IQuotePriceQuery
     {
 
     }

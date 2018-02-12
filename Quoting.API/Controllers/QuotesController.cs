@@ -37,11 +37,13 @@ namespace Quoting.API.Controllers
             if (error != null)
                 return error;
 
+            _quoteRepo.Add(quote);
+
             quote.Customer.AddVehicle(quote.Vehicle);
 
             quote.SetCustomer(await _customerRepo.Put(quote.Customer));
 
-            _quoteRepo.Add(quote);
+            quote.SetStatusAsRequested();
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -51,7 +53,7 @@ namespace Quoting.API.Controllers
         }
 
         private void CacheRequest(Quote quote)
-            => _cache.Set(QuoteRequestKey(quote.Id), QuoteToRequest(quote), DateTimeOffset.Now.AddHours(1));
+            => _cache?.Set(QuoteRequestKey(quote.Id), QuoteToRequest(quote), DateTimeOffset.Now.AddHours(1));
 
         private string QuoteRequestKey(int id)
         {

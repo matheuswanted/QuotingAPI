@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Quoting.Domain.Queries
 {
-    public interface IPriceModifierRulesAppliableToCustomerQuery : IQuery<IEnumerable<PriceModifierRule>>
+    public interface IPriceModifierRulesAppliableToCustomerQuery : IQuery<IEnumerable<PriceModifierRule>>, IQuotePriceQuery
     {
     }
 }
