@@ -8,6 +8,7 @@ using Quoting.Domain.Queries;
 using Quoting.Domain.Repositories;
 using Quoting.Domain.Repositories.Queryable;
 using Quoting.Domain.Seedworking;
+using Quoting.Domain.ValueObjects;
 
 namespace Quoting.API.Controllers
 {
@@ -31,15 +32,15 @@ namespace Quoting.API.Controllers
         }
         [Route("Quote")]
         [HttpPost]
-        public async Task<IActionResult> Quote([FromBody]Quote quote)
+        public async Task<IActionResult> Quote([FromBody]QuoteRequest request)
         {
+            var quote = request.ToQuote();
+
             BadRequestObjectResult error = CheckConsistency(quote);
             if (error != null)
                 return error;
 
             _quoteRepo.Add(quote);
-
-            quote.Customer.AddVehicle(quote.Vehicle);
 
             quote.SetCustomer(await _customerRepo.Put(quote.Customer));
 
@@ -53,7 +54,7 @@ namespace Quoting.API.Controllers
         }
 
         private void CacheRequest(Quote quote)
-            => _cache?.Set(QuoteRequestKey(quote.Id), QuoteToRequest(quote), DateTimeOffset.Now.AddHours(1));
+            => _cache?.Set(QuoteRequestKey(quote.Id), quote.Request, DateTimeOffset.Now.AddHours(1));
 
         private string QuoteRequestKey(int id)
         {
@@ -77,7 +78,7 @@ namespace Quoting.API.Controllers
 
             CacheRequest(result);
 
-            return Ok(QuoteToRequest(result));
+            return Ok(result.Request);
         }
 
         [Route("Status")]
@@ -94,27 +95,6 @@ namespace Quoting.API.Controllers
                 Value = result.Value.ToString("#0.00")
             });
         }
-
-        private object QuoteToRequest(Quote quote)
-            => new
-            {
-                Customer = new
-                {
-                    quote.Customer.SSN,
-                    quote.Customer.Phone,
-                    quote.Customer.Address,
-                    quote.Customer.Email,
-                    quote.Customer.Gender,
-                    BirthDate = quote.Customer.BirthDate.ToShortDateString(),
-                },
-                Vehicle = new
-                {
-                    quote.Vehicle.Make,
-                    quote.Vehicle.ManufacturingYear,
-                    quote.Vehicle.Model,
-                    quote.Vehicle.Type
-                }
-            };
 
         private BadRequestObjectResult CheckConsistency(Quote quote)
         {

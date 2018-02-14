@@ -1,0 +1,138 @@
+{
+	"id": "8a545834-1c37-d997-d49a-49d0fbeee6e4",
+	"name": "Quoting.API",
+	"description": "",
+	"order": [],
+	"folders": [
+		{
+			"name": "api/Quote",
+			"description": "",
+			"collectionId": "8a545834-1c37-d997-d49a-49d0fbeee6e4",
+			"order": [
+				"5e9d4043-7f9f-47ca-3175-c90290f39ea2",
+				"b9ae5513-fcbe-3bd7-19ef-068cd148ccc0",
+				"7c080079-415f-6672-f41c-d6e84e9a4617"
+			],
+			"owner": "1022079",
+			"folders_order": [],
+			"id": "d55ec6f3-1dde-fee7-5ec4-c581b489ab09"
+		}
+	],
+	"folders_order": [
+		"d55ec6f3-1dde-fee7-5ec4-c581b489ab09"
+	],
+	"timestamp": 1518209486862,
+	"owner": "1022079",
+	"public": false,
+	"events": [],
+	"variables": [],
+	"auth": null,
+	"requests": [
+		{
+			"id": "5e9d4043-7f9f-47ca-3175-c90290f39ea2",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{Quoting.API}}/api/Quotes/Quote",
+			"folder": "d55ec6f3-1dde-fee7-5ec4-c581b489ab09",
+			"queryParams": [],
+			"events": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a7e47ada-3e53-4e42-87ec-fec10638babb",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set(\"QuoteId\", responseBody);"
+						]
+					}
+				}
+			],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"auth": null,
+			"time": 1518403076124,
+			"name": "Quote :: Post Quote",
+			"description": "Post a consistent model on quote route",
+			"collectionId": "8a545834-1c37-d997-d49a-49d0fbeee6e4",
+			"responses": [],
+			"preRequestScript": null,
+			"tests": "pm.environment.set(\"QuoteId\", responseBody);",
+			"currentHelper": null,
+			"helperAttributes": null,
+			"rawModeData": "{\n\t\"Customer\" : {\n\t\t\"SSN\" : \"001-259-963\",\n\t\t\"Address\":\"15th street\",\n\t\t\"Email\":\"email@email.com\",\n\t\t\"Phone\":\"88696635\",\n\t\t\"Gender\":\"F\",\n\t\t\"BirthDate\": \"1999-04-30\"\n\t},\n\t\"Vehicle\":{\n\t\t\"Type\":\"Car\",\n\t\t\"ManufacturingYear\":1850,\n\t\t\"Model\":\"Palio\",\n\t\t\"Make\":\"Fiat\"\n\t}\n}\n"
+		},
+		{
+			"id": "7c080079-415f-6672-f41c-d6e84e9a4617",
+			"headers": "",
+			"headerData": [],
+			"url": "{{Quoting.API}}/api/Quotes/Status?Id={{QuoteId}}",
+			"folder": "d55ec6f3-1dde-fee7-5ec4-c581b489ab09",
+			"queryParams": [
+				{
+					"key": "Id",
+					"value": "{{QuoteId}}",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"events": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"auth": null,
+			"time": 1518356737807,
+			"name": "Quote :: Get Status",
+			"description": "",
+			"collectionId": "8a545834-1c37-d997-d49a-49d0fbeee6e4",
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		},
+		{
+			"id": "b9ae5513-fcbe-3bd7-19ef-068cd148ccc0",
+			"headers": "",
+			"headerData": [],
+			"url": "{{Quoting.API}}/api/Quotes/Information?Id={{QuoteId}}",
+			"folder": "d55ec6f3-1dde-fee7-5ec4-c581b489ab09",
+			"queryParams": [
+				{
+					"key": "Id",
+					"value": "{{QuoteId}}",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"events": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"auth": null,
+			"time": 1518356738688,
+			"name": "Quote :: Get Information",
+			"description": "",
+			"collectionId": "8a545834-1c37-d997-d49a-49d0fbeee6e4",
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		}
+	]
+}

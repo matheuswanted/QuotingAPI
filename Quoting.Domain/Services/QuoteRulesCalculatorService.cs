@@ -10,11 +10,11 @@ using Quoting.Domain.ValueObjects;
 
 namespace Quoting.Domain.Services
 {
-    public class QuotingCalculator : IQuotingCalculator
+    public class QuoteRulesCalculatorService : IQuoteRulesCalculatorService
     {
         private readonly IQuotePriceQueryableRepository _queries;
 
-        public QuotingCalculator(IQuotePriceQueryableRepository queries)
+        public QuoteRulesCalculatorService(IQuotePriceQueryableRepository queries)
         {
             _queries = queries;
         }
@@ -34,7 +34,7 @@ namespace Quoting.Domain.Services
             return result ?? DefaultBasePrice();
         }
 
-        public async Task<PriceModifierRule> CalculateModifier(Customer customer)
+        public async Task<PriceModifierRule> SelectPriceModifierRuleFor(Customer customer)
         {
             IEnumerable<PriceModifierRule> rules = await _queries
                 .Query<IPriceModifierRulesAppliableToCustomerQuery>()

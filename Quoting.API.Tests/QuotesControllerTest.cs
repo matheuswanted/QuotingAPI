@@ -8,6 +8,7 @@ using Quoting.Domain.Queries;
 using Quoting.Domain.Repositories;
 using Quoting.Domain.Repositories.Queryable;
 using Quoting.Domain.Seedworking;
+using Quoting.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,7 +28,7 @@ namespace Quoting.API.Tests
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _unitOfWorkMock.Setup(m => m.SaveChangesAsync(default(System.Threading.CancellationToken))).ReturnsAsync(() => 1);
             _customerRepoMock = new Mock<ICustomerRepository>();
-            _customerRepoMock.Setup(m => m.Put(It.IsAny<Customer>())).ReturnsAsync(() => ControllerGenerator.OkCustomer());
+            _customerRepoMock.Setup(m => m.Put(It.IsAny<Customer>())).ReturnsAsync(() => new Customer() { Id = 1 }.From(ControllerGenerator.OkCustomer()));
             _quoteRepoMock = new Mock<IQuoteRepository>();
             _quoteRepoMock.Setup(m => m.Add(It.IsAny<Quote>()));
         }
@@ -50,7 +51,7 @@ namespace Quoting.API.Tests
         }
         [Theory]
         [MemberData(nameof(ControllerGenerator.BadCustomers), MemberType = typeof(ControllerGenerator))]
-        public void QuotesQuote_ShouldReturnBadRequest(Quote customer)
+        public void QuotesQuote_ShouldReturnBadRequest(QuoteRequest customer)
         {
             var controller = New();
             var result = controller.Quote(customer).Result;

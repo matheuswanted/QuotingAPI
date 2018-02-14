@@ -1,4 +1,5 @@
 ﻿using Quoting.Domain.Seedworking;
+using Quoting.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,18 @@ namespace Quoting.Domain.Models
         {
             var vehicle = @object as Vehicle;
             return vehicle != null && Type == vehicle.Type && ManufacturingYear == vehicle.ManufacturingYear && Model == vehicle.Model && Make == vehicle.Make;
+        }
+
+        internal Vehicle From(QuoteRequestVehicle vehicle)
+        {
+            if (vehicle != null)
+            {
+                Make = vehicle.Make;
+                Type = vehicle.Type;
+                Model = vehicle.Model;
+                ManufacturingYear = vehicle.ManufacturingYear;
+            }
+            return this;
         }
     }
 }

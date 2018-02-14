@@ -13,8 +13,9 @@ namespace Quoting.Domain.Models
     }
     public class Quote : ConsistentModel, IAggregateRoot
     {
-        public Customer Customer { get; set; }
-        public Vehicle Vehicle { get; set; }
+        public QuoteRequest Request { get; private set; }
+        public Customer Customer { get; private set; }
+        public Vehicle Vehicle { get; private set; }
         public decimal Value { get; private set; }
         public int _status;
         public QuoteStatus Status { get => (QuoteStatus)_status; set => _status = (int)value; }
@@ -38,6 +39,15 @@ namespace Quoting.Domain.Models
                 throw new ApplicationException("It's not possible to change the current Status to 'Requested'.");
             Status = QuoteStatus.Requested;
             Raise(new QuoteRequestedEventBuilder(this));
+        }
+
+        public Quote From(QuoteRequest request)
+        {
+            Customer = new Customer().From(request.Customer);
+            Vehicle = new Vehicle().From(request.Vehicle);
+            Request = request;
+            Customer.AddVehicle(Vehicle);
+            return this;
         }
 
         public void CalculatePriceWithRules(BasePriceRule basePriceRule, PriceModifierRule modifier)

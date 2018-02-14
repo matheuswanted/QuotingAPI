@@ -21,8 +21,7 @@ namespace Quoting.Infrastructure.Queries
         public Task<Quote> Run(int request)
         {
             return _context.Quotes
-                .Include(q => q.Customer)
-                .Include(q => q.Vehicle)
+                .Include(q => q.Request)
                 .Where(q => q.Id == request)
                 .FirstOrDefaultAsync();
         }

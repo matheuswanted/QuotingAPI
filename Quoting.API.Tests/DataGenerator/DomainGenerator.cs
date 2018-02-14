@@ -56,7 +56,7 @@ namespace Quoting.API.Tests.DataGenerator
                 Make = maker,
                 Model = model
             };
-        public static IQuotingCalculator NewCalculator()
+        public static IQuoteRulesCalculatorService NewCalculator()
         {
             var mockPriceModifierRulesAppliableToCustomerQuery = new Mock<IPriceModifierRulesAppliableToCustomerQuery>();
             var mockBasePriceRulesAppliableToVehicleQuery = new Mock<IBasePriceRulesAppliableToVehicleQuery>();
@@ -73,7 +73,7 @@ namespace Quoting.API.Tests.DataGenerator
                 .Setup(m => m.Query<IBasePriceRulesAppliableToVehicleQuery>())
                 .Returns(() => mockBasePriceRulesAppliableToVehicleQuery.Object);
 
-            return new QuotingCalculator(mockQueryableRepo.Object);
+            return new QuoteRulesCalculatorService(mockQueryableRepo.Object);
         }
         private static IEnumerable<BasePriceRule> RunBasePriceQuery()
         {

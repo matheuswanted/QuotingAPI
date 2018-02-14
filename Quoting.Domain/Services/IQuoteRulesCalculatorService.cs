@@ -7,9 +7,9 @@ using Quoting.Domain.ValueObjects;
 
 namespace Quoting.Domain.Services
 {
-    public interface IQuotingCalculator
+    public interface IQuoteRulesCalculatorService
     {
-        Task<PriceModifierRule> CalculateModifier(Customer customer);
+        Task<PriceModifierRule> SelectPriceModifierRuleFor(Customer customer);
         Task<BasePriceRule> SelectBasePriceRuleFor(Vehicle vehicle);
         BasePriceRule DefaultBasePrice();
     }

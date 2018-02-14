@@ -28,6 +28,10 @@ namespace Quoting.Infrastructure.EntityConfig
                 .WithOne()
                 .HasForeignKey(typeof(Quote), "VehicleId");
 
+            builder.HasOne(q => q.Request)
+                .WithOne()
+                .HasForeignKey(typeof(Quote), "QuoteRquestId");
+
         }
     }
 }

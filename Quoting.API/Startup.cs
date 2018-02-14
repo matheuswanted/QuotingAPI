@@ -35,6 +35,7 @@ namespace Quoting.API
         {
             services.AddMemoryCache();
             services.AddMvc();
+            Console.WriteLine(Configuration["ConnectionStrings:QuotingDbConnection"]);
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<QuotingDbContext>((DbContextOptionsBuilder options) =>
                 {
@@ -57,7 +58,7 @@ namespace Quoting.API
             services.AddScoped<IQuoteQueryableRepository, QuoteQueryableRepository>();
             services.AddScoped<IQuotePriceQueryableRepository, QuotePriceQueryableRepository>();
 
-            services.AddTransient<IQuotingCalculator, QuotingCalculator>();
+            services.AddTransient<IQuoteRulesCalculatorService, QuoteRulesCalculatorService>();
             services.AddTransient<DbSeed>();
 
             new Infrastructure.Bus.Configuration.Startup().ConfigureServices(services, Configuration);
@@ -69,7 +70,7 @@ namespace Quoting.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IEventManager manager, DbSeed seed)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IEventManager manager, IServiceProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -77,7 +78,7 @@ namespace Quoting.API
             }
 
             app.UseMvc();
-            seed.Seed().Wait();
+            provider.GetService<DbSeed>().Seed().Wait();
 
             manager.Subscribe<QuoteRequestedEvent, IEventHandler<QuoteRequestedEvent>>();
         }

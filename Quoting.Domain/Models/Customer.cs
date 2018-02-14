@@ -1,4 +1,5 @@
 ﻿using Quoting.Domain.Seedworking;
+using Quoting.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,5 +55,18 @@ namespace Quoting.Domain.Models
             return base.IsConsistent();
         }
 
+        public Customer From(QuoteRequestCustomer customer)
+        {
+            if (customer != null)
+            {
+                SSN = customer.SSN;
+                Email = customer.Email;
+                Phone = customer.Phone;
+                Gender = customer.Gender;
+                Address = customer.Address;
+                BirthDate = customer.BirthDate;
+            }
+            return this;
+        }
     }
 }

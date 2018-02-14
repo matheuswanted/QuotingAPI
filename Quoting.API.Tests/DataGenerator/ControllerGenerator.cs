@@ -1,4 +1,6 @@
-﻿using Quoting.Domain.Models;
+﻿using Moq;
+using Quoting.Domain.Models;
+using Quoting.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,26 +9,26 @@ namespace Quoting.API.Tests.DataGenerator
 {
     public class ControllerGenerator
     {
-        public static Quote OkQuote()
+        public static QuoteRequest OkQuote()
         {
-            return new Quote()
+            var m = new Mock<QuoteRequest>();
+            m.Object.Customer = OkCustomer();
+            m.Object.Vehicle = new QuoteRequestVehicle
             {
-                Id = 1,
-                Customer = OkCustomer(),
-                Vehicle = new Vehicle
-                {
-                    Make = "Ford",
-                    Model = "Fiesta",
-                    Type = "Car",
-                    ManufacturingYear = 2017
-                }
+                Make = "Ford",
+                Model = "Fiesta",
+                Type = "Car",
+                ManufacturingYear = 2017
             };
+            m.Setup(r => r.ToQuote())
+                .Returns(() => new Quote() { Id = 1 }.From(m.Object));
+
+            return m.Object;
         }
-        public static Customer OkCustomer()
+        public static QuoteRequestCustomer OkCustomer()
         {
-            var c = new Customer()
+            return new QuoteRequestCustomer()
             {
-                Id = 1,
                 SSN = "123-25-256",
                 Address = "15th street",
                 BirthDate = DateTime.Now,
@@ -34,21 +36,13 @@ namespace Quoting.API.Tests.DataGenerator
                 Gender = "M",
                 Phone = "+18695972"
             };
-            c.AddVehicle(new Vehicle
-            {
-                Make = "Ford",
-                Model = "Fiesta",
-                Type = "Car",
-                ManufacturingYear = 2017
-            });
-            return c;
         }
         public static IEnumerable<object[]> BadCustomers()
         {
-            yield return new[] { new Quote() };
-            yield return new[] { new Quote()
+            yield return new[] { new QuoteRequest() };
+            yield return new[] { new QuoteRequest()
                 {
-                    Customer = new Customer
+                    Customer = new QuoteRequestCustomer
                     {
                         SSN = "123-25-256",
                         Address = "15th street",

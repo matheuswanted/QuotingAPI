@@ -19,9 +19,9 @@ namespace Quoting.API.Tests
         }
         [Theory]
         [MemberData(nameof(DomainGenerator.CreateModifierScenarios), MemberType = typeof(DomainGenerator))]
-        public void CalculateModifier_ShouldReturnAModifierByAgeRangeAndGender(Customer customer, IQuotingCalculator calculator, PriceModifierRule modifier)
+        public void CalculateModifier_ShouldReturnAModifierByAgeRangeAndGender(Customer customer, IQuoteRulesCalculatorService calculator, PriceModifierRule modifier)
         {
-            AssertValueObject(modifier, calculator.CalculateModifier(customer).Result);
+            AssertValueObject(modifier, calculator.SelectPriceModifierRuleFor(customer).Result);
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace Quoting.API.Tests
 
         [Theory]
         [MemberData(nameof(DomainGenerator.CreateBasePriceScenarios), MemberType = typeof(DomainGenerator))]
-        public void SelectBasePriceRuleFor_ShouldReturnConfiguredPrice_WhenThereIsARuleAppliableToTheVehicle(Vehicle vehicle, IQuotingCalculator calculator, BasePriceRule basePrice)
+        public void SelectBasePriceRuleFor_ShouldReturnConfiguredPrice_WhenThereIsARuleAppliableToTheVehicle(Vehicle vehicle, IQuoteRulesCalculatorService calculator, BasePriceRule basePrice)
         {
             BasePriceRule resultRule = calculator.SelectBasePriceRuleFor(vehicle).Result;
 

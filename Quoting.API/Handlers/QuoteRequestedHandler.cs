@@ -11,9 +11,9 @@ namespace Quoting.API.Handlers
     {
         private readonly IQuoteRepository _quoteRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IQuotingCalculator _quotingCalculator;
+        private readonly IQuoteRulesCalculatorService _quotingCalculator;
 
-        public QuoteRequestedHandler(IUnitOfWork unitOfWork, IQuoteRepository quoteRepository, IQuotingCalculator quoteingCalculator)
+        public QuoteRequestedHandler(IUnitOfWork unitOfWork, IQuoteRepository quoteRepository, IQuoteRulesCalculatorService quoteingCalculator)
         {
             _quoteRepository = quoteRepository;
             _unitOfWork = unitOfWork;
@@ -22,7 +22,7 @@ namespace Quoting.API.Handlers
         public async Task Handle(QuoteRequestedEvent notification)
         {
             var quote = await _quoteRepository.FindById(notification.QuoteId);
-            var modifier = _quotingCalculator.CalculateModifier(quote.Customer);
+            var modifier = _quotingCalculator.SelectPriceModifierRuleFor(quote.Customer);
             var basePriceRule = _quotingCalculator.SelectBasePriceRuleFor(quote.Vehicle);
 
             quote.CalculatePriceWithRules(await basePriceRule, await modifier);
