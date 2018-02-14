@@ -1,4 +1,5 @@
-Requirements: RabbitMQ server running, MSSQL localdb
+### Prerequisites
+RabbitMQ server running, MSSQL localdb
 
 Installing RabbitMQ:
 https://www.rabbitmq.com/download.html
@@ -8,14 +9,16 @@ but basically you have to execute Erlang installer as administrator, then execut
 After installing RabbitMQ, you need to start rabbitmq service. If you have changed rabbitmq configs, like user/pass, hostname or port,
 it's necessary to update appsettings.json RawRabbit section.
 
-Executing the API:
+### Executing the API:
 Just run the script Run.ps1, it will publish the main project as release into App folder and execute.
 
-API tests:
+### API tests:
 The API tests were executed with Postman. The environment and test collection is available inside Postman folder.
 
-The main routes are :
- --- > /api/Quotes/Quote
+### Routes
+
+```
+ /api/Quotes/Quote
 	{
 		"Customer" : {
 			"SSN" : "001-259-963",
@@ -32,7 +35,12 @@ The main routes are :
 			"Make":"Fiat"
 		}
 	}
-	
-	
- --->/api/Quotes/Status?Id={{QuoteId}} 
- --->/api/Quotes/Information?Id={{QuoteId}}
+```
+
+```
+ /api/Quotes/Status?Id={{QuoteId}} 
+```
+ 
+```
+ /api/Quotes/Information?Id={{QuoteId}}
+```
