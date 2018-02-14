@@ -9,10 +9,10 @@ but basically you have to execute Erlang installer as administrator, then execut
 After installing RabbitMQ, you need to start rabbitmq service. If you have changed rabbitmq configs, like user/pass, hostname or port,
 it's necessary to update appsettings.json RawRabbit section.
 
-### Executing the API:
+### Executing the API
 Just run the script Run.ps1, it will publish the main project as release into App folder and execute.
 
-### API tests:
+### API tests
 The API tests were executed with Postman. The environment and test collection is available inside Postman folder.
 
 ### Routes
