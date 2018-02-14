@@ -4,12 +4,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Quoting.API.Handlers;
+using Quoting.Domain.Models.Events;
 using Quoting.Domain.Queries;
 using Quoting.Domain.Repositories;
 using Quoting.Domain.Repositories.Queryable;
 using Quoting.Domain.Seedworking;
 using Quoting.Domain.Services;
 using Quoting.Infrastructure;
+using Quoting.Infrastructure.Bus;
+using Quoting.Infrastructure.Bus.Contracts;
 using Quoting.Infrastructure.Queries;
 using Quoting.Infrastructure.Repositories;
 using Quoting.Infrastructure.Repositories.Queryable;
@@ -55,12 +59,17 @@ namespace Quoting.API
 
             services.AddTransient<IQuotingCalculator, QuotingCalculator>();
             services.AddTransient<DbSeed>();
-            
 
+            new Infrastructure.Bus.Configuration.Startup().ConfigureServices(services, Configuration);
+
+            services.AddTransient<IPublisher, EventPublisher>();
+            services.AddTransient<IEventManager, EventManager>();
+
+            services.AddTransient<IEventHandler<QuoteRequestedEvent>, QuoteRequestedHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DbSeed seed)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IEventManager manager, DbSeed seed)
         {
             if (env.IsDevelopment())
             {
@@ -69,6 +78,8 @@ namespace Quoting.API
 
             app.UseMvc();
             seed.Seed().Wait();
+
+            manager.Subscribe<QuoteRequestedEvent, IEventHandler<QuoteRequestedEvent>>();
         }
     }
 }

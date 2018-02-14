@@ -1,10 +1,7 @@
-﻿using Quoting.Domain.Models.Notifications;
+﻿using Quoting.Domain.Models.Events;
 using Quoting.Domain.Seedworking;
 using Quoting.Domain.ValueObjects;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quoting.Domain.Models
 {
@@ -40,7 +37,7 @@ namespace Quoting.Domain.Models
             if (Status != QuoteStatus.None)
                 throw new ApplicationException("It's not possible to change the current Status to 'Requested'.");
             Status = QuoteStatus.Requested;
-            Notify(new QuoteRequestedEvent(this));
+            Raise(new QuoteRequestedEventBuilder(this));
         }
 
         public void CalculatePriceWithRules(BasePriceRule basePriceRule, PriceModifierRule modifier)

@@ -32,7 +32,7 @@ namespace Quoting.Domain.Seedworking
         protected void ResetModelState()
             => _modelInconsistencies.Clear();
 
-        public void Notify(IEvent notification)
+        public void Raise(IEvent notification)
             => _events.Add(notification);
         
     }

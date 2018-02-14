@@ -2,6 +2,9 @@
 {
     public interface IEvent
     {
-
+    }
+    public interface IEventBuilder : IEvent
+    {
+        IEvent Build();
     }
 }

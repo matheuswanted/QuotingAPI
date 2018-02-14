@@ -1,9 +1,8 @@
-﻿using Quoting.Domain.Models.Notifications;
+﻿using Quoting.Domain.Models.Events;
 using Quoting.Domain.Repositories;
 using Quoting.Domain.Seedworking;
 using Quoting.Domain.Services;
 using Quoting.Infrastructure.Bus.Contracts;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Quoting.API.Handlers

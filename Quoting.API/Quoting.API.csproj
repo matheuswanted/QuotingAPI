@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quoting.Domain\Quoting.Domain.csproj" />
+    <ProjectReference Include="..\Quoting.Infrastructure.Bus\Quoting.Infrastructure.Bus.csproj" />
     <ProjectReference Include="..\Quoting.Infrastructure\Quoting.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -20,6 +20,7 @@ namespace Quoting.Infrastructure.Seed
         {
             using (_context)
             {
+                await _context.Database.MigrateAsync();
                 if (!await _context.BasePriceRules.AnyAsync())
                     _context.BasePriceRules.AddRange(FactoryBasePriceRules());
                 if (!await _context.BasePriceRules.AnyAsync())

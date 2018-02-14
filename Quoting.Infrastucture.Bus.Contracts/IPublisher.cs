@@ -5,7 +5,7 @@ namespace Quoting.Infrastructure.Bus.Contracts
 {
     public interface IPublisher
     {
-        Task Publish(IEvent @event);
-        Task Publish(IEnumerable<IEvent> events);
+        Task PublishAsync(IEvent @event);
+        Task PublishAsync(IEnumerable<IEvent> events);
     }
 }
